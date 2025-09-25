@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-const env = dotenv.config({ path: '.env' }).parsed
+const env = process.env
 
 export default {
     dialect: env.DIALECT,
