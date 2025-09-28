@@ -22,6 +22,14 @@ class Product extends Model {
             { sequelize }
         )
     }
+
+    static associate(models) {
+        this.belongsToMany(models.ShoppingList, {
+            through: models.ShoppingListItem,
+            foreignKey: 'product_id',
+            as: 'shopping_lists'
+        });
+    }
 }
 
 export default Product

@@ -8,16 +8,19 @@ export const createUser = async (req, res) => {
             id: crypto.randomUUID(),
             name: req.body.name,
             age: req.body.age,
-            email: req.body.email
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password
         }
 
         const user = await User.create(userToCreate)
 
         res.status(201).json(user)
     } catch (err) {
-        // Handle unique constraint error for email
+        // Handle unique constraint error for email or username
         if (err.name === 'SequelizeUniqueConstraintError') {
-            return res.status(400).json({ error: 'Email already exists' })
+            const field = err.errors[0].path;
+            return res.status(400).json({ error: `${field} already exists` })
         }
         res.status(500).json({ error: err.message })
     }
@@ -62,6 +65,10 @@ export const updateUser = async (req, res) => {
         
         res.status(200).json(updatedUser);
     } catch (err) {
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            const field = err.errors[0].path;
+            return res.status(400).json({ error: `${field} already exists` });
+        }
         res.status(500).json({ error: err.message });
     }
 }

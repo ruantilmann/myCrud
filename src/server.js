@@ -1,10 +1,13 @@
 import express from 'express'
 import User from './models/User.js'
 import Product from './models/Product.js'
+import ShoppingList from './models/ShoppingList.js';
+import ShoppingListItem from './models/ShoppingListItem.js';
 import Sequelize from 'sequelize'
 import config from './config/database.js'
 import userRoutes from './routes/userRoutes.js'
 import productRoutes from './routes/productRoutes.js'
+import shoppingListRoutes from './routes/shoppingListRoutes.js'
 import dotenv from 'dotenv'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swagger.js'
@@ -21,12 +24,15 @@ const app = express()
 app.use(express.json())
 
 const sequelize = new Sequelize(config)
-User.init(sequelize)
-Product.init(sequelize)
+
+const models = [User, Product, ShoppingList, ShoppingListItem];
+models.forEach(model => model.init(sequelize));
+models.forEach(model => model.associate && model.associate(sequelize.models));
 
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use('/users', userRoutes)
 app.use('/products', productRoutes)
+app.use('/', shoppingListRoutes)
 
 sequelize.authenticate().then(() => {
     console.log("BD Conectado!")
