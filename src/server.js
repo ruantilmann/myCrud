@@ -11,6 +11,7 @@ import shoppingListRoutes from './routes/shoppingListRoutes.js'
 import dotenv from 'dotenv'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swagger.js'
+import cors from 'cors'
 
 const env = process.env.NODE_ENV || 'dev'
 
@@ -29,6 +30,7 @@ const models = [User, Product, ShoppingList, ShoppingListItem];
 models.forEach(model => model.init(sequelize));
 models.forEach(model => model.associate && model.associate(sequelize.models));
 
+app.use(cors()) // Permite requisições de qualquer origem
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use('/users', userRoutes)
 app.use('/products', productRoutes)
